@@ -723,6 +723,10 @@ class AwsAutoScalingService implements CacheInitializer, InitializingBean {
         }
     }
 
+    private List<NotificationConfiguration> retrieveNotificationConfigurations(Region region) {
+        notificationConfigurationRetriever.retrieve(region, new DescribeNotificationConfigurationsRequest())
+    }
+
     /**
      * Create an ASG.
      *
