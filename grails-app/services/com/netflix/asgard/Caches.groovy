@@ -17,6 +17,7 @@ package com.netflix.asgard
 
 import com.amazonaws.services.autoscaling.model.AutoScalingGroup
 import com.amazonaws.services.autoscaling.model.LaunchConfiguration
+import com.amazonaws.services.autoscaling.model.NotificationConfiguration
 import com.amazonaws.services.autoscaling.model.ScalingPolicy
 import com.amazonaws.services.autoscaling.model.ScheduledUpdateGroupAction
 import com.amazonaws.services.cloudwatch.model.MetricAlarm
@@ -84,6 +85,7 @@ class Caches {
     final MultiRegionCachedMap<KeyPairInfo> allKeyPairs
     final MultiRegionCachedMap<LaunchConfiguration> allLaunchConfigurations
     final MultiRegionCachedMap<LoadBalancerDescription> allLoadBalancers
+    final MultiRegionCachedMap<NotificationConfiguration> allNotificationConfigurations
     final MultiRegionCachedMap<SimpleQueue> allQueues
     final MultiRegionCachedMap<ReservedInstances> allReservedInstancesGroups
     final MultiRegionCachedMap<ScalingPolicy> allScalingPolicies
@@ -130,6 +132,8 @@ class Caches {
         allDBSnapshots = cachedMapBuilder.of(EntityType.dbSnapshot, 120).buildMultiRegionCachedMap()
         allFastProperties = cachedMapBuilder.of(EntityType.fastProperty, 180).buildMultiRegionCachedMap(configService?.
                 platformServiceRegions)
+        allNotificationConfigurations = cachedMapBuilder.of(EntityType.notificationConfiguration, 120).
+                buildMultiRegionCachedMap()
         allScalingPolicies = cachedMapBuilder.of(EntityType.scalingPolicy, 120).buildMultiRegionCachedMap()
         allScheduledActions = cachedMapBuilder.of(EntityType.scheduledAction, 120).buildMultiRegionCachedMap()
         allSignificantStackInstanceHealthChecks = cachedMapBuilder.of(EntityType.instanceHealth, 300).

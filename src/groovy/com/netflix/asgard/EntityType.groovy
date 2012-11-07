@@ -17,6 +17,7 @@ package com.netflix.asgard
 
 import com.amazonaws.services.autoscaling.model.AutoScalingGroup
 import com.amazonaws.services.autoscaling.model.LaunchConfiguration
+import com.amazonaws.services.autoscaling.model.NotificationConfiguration
 import com.amazonaws.services.autoscaling.model.ScalingPolicy
 import com.amazonaws.services.autoscaling.model.ScheduledUpdateGroupAction
 import com.amazonaws.services.cloudwatch.model.MetricAlarm
@@ -93,6 +94,8 @@ import org.codehaus.jackson.annotate.JsonProperty
             { it.launchConfigurationName })
     static final EntityType<LoadBalancerDescription> loadBalancer = create('Elastic Load Balancer',
             { it.loadBalancerName })
+    static final EntityType<NotificationConfiguration> notificationConfiguration = create('Notification Configuration',
+            { it.autoScalingGroupName })
     static final EntityType<SimpleQueue> queue = create('Queue', { it.name })
     static final EntityType<ReservedInstances> reservation = create('Reservation', { it.reservedInstancesId })
     static final EntityType<ScalingPolicy> scalingPolicy = create('Scaling Policy', { it.policyName })
