@@ -730,7 +730,16 @@ class AwsAutoScalingService implements CacheInitializer, InitializingBean {
     }
 
     /**
-     * Create an ASG.
+     * Finds all notification configurations for a region.
+     *
+     * @return notification configurations
+     */
+    Collection<NotificationConfiguration> getAllNotificationConfigurations(UserContext userContext) {
+        caches.allNotificationConfigurations.by(userContext.region).list()
+    }
+
+    /**
+     * Creates an ASG.
      *
      * @param userContext who made the call, why, and in what region
      * @param groupTemplate ASG attributes for the new ASG
