@@ -165,6 +165,8 @@ class AwsAutoScalingService implements CacheInitializer, InitializingBean {
                 { Region region -> caches.allClusters.by(region).fill() })
         caches.allLaunchConfigurations.ensureSetUp({ Region region -> retrieveLaunchConfigurations(region) })
         caches.allScalingPolicies.ensureSetUp({ Region region -> retrieveScalingPolicies(region) })
+        caches.allNotificationConfigurations.ensureSetUp(
+                { Region region -> retrieveNotificationConfigurations(region) })
         caches.allTerminationPolicyTypes.ensureSetUp({ Region region -> retrieveTerminationPolicyTypes() })
         caches.allScheduledActions.ensureSetUp({ Region region -> retrieveScheduledActions(region) })
         caches.allSignificantStackInstanceHealthChecks.ensureSetUp(
