@@ -36,6 +36,7 @@ import com.amazonaws.services.elasticloadbalancing.model.SourceSecurityGroup
 import com.amazonaws.services.rds.model.DBInstance
 import com.amazonaws.services.rds.model.DBSecurityGroup
 import com.amazonaws.services.rds.model.DBSnapshot
+import com.amazonaws.services.route53.model.HostedZone
 import com.amazonaws.services.simpleworkflow.model.ActivityTypeInfo
 import com.amazonaws.services.simpleworkflow.model.DomainInfo
 import com.amazonaws.services.simpleworkflow.model.WorkflowExecutionInfo
@@ -84,6 +85,7 @@ import org.codehaus.jackson.annotate.JsonProperty
             { Map attrs, String objectId -> attrs.params = [name: objectId] })
     static final EntityType<HardwareProfile> hardwareProfile = create('Hardware Profile',
             { it.instanceType.toString() })
+    static final EntityType<HostedZone> hostedZone = create('Hosted Zone', { it.id })
     static final EntityType<Image> image = create('Image', { it.imageId })
     static final EntityType<Instance> instance = create('Instance', { it.instanceId }, 'i-')
     static final EntityType<InstanceHealth> instanceHealth = create('Instance Health', { it.instanceId })
