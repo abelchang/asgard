@@ -16,6 +16,11 @@
 package com.netflix.asgard
 
 import com.amazonaws.services.route53.AmazonRoute53
+import com.amazonaws.services.route53.model.Change
+import com.amazonaws.services.route53.model.ChangeAction
+import com.amazonaws.services.route53.model.ChangeBatch
+import com.amazonaws.services.route53.model.ChangeInfo
+import com.amazonaws.services.route53.model.ChangeResourceRecordSetsRequest
 import com.amazonaws.services.route53.model.GetHostedZoneRequest
 import com.amazonaws.services.route53.model.HostedZone
 import com.amazonaws.services.route53.model.ListHostedZonesRequest
@@ -26,6 +31,7 @@ import com.amazonaws.services.route53.model.NoSuchHostedZoneException
 import com.amazonaws.services.route53.model.ResourceRecordSet
 import com.netflix.asgard.cache.CacheInitializer
 import com.netflix.asgard.retriever.AwsResultsRetriever
+import grails.util.GrailsNameUtils
 import org.springframework.beans.factory.InitializingBean
 
 /**
@@ -38,6 +44,7 @@ class AwsRoute53Service implements CacheInitializer, InitializingBean {
     AmazonRoute53 awsClient
     def awsClientService
     Caches caches
+    def taskService
 
     void afterPropertiesSet() {
 
@@ -104,11 +111,11 @@ class AwsRoute53Service implements CacheInitializer, InitializingBean {
         }
 
         protected void setNextToken(ListResourceRecordSetsRequest request, String nextToken) {
-            request.withStartRecordIdentifier(nextToken)
+            request.withStartRecordName(nextToken)
         }
 
         protected String getNextToken(ListResourceRecordSetsResult result) {
-            result.nextRecordIdentifier
+            result.nextRecordName
         }
     }
 
@@ -116,4 +123,31 @@ class AwsRoute53Service implements CacheInitializer, InitializingBean {
         ListResourceRecordSetsRequest request = new ListResourceRecordSetsRequest(hostedZoneId: hostedZoneId)
         resourceRecordSetRetriever.retrieve(Region.defaultRegion(), request)
     }
+
+    ChangeInfo createResourceRecordSet(UserContext userContext, String hostedZoneId,
+                                       ResourceRecordSet resourceRecordSet, String comment) {
+        taskService.runTask(userContext, "Create Resource Record ${resourceRecordSet.name}", {
+            Change change = new Change(action: ChangeAction.CREATE, resourceRecordSet: resourceRecordSet)
+            changeResourceRecordSet(userContext, hostedZoneId, change, comment)
+        }, Link.to(EntityType.hostedZone, hostedZoneId)) as ChangeInfo
+    }
+
+    ChangeInfo deleteResourceRecordSet(UserContext userContext, String hostedZoneId,
+                                       ResourceRecordSet resourceRecordSet, String comment) {
+        taskService.runTask(userContext, "Delete Resource Record ${resourceRecordSet.name}", {
+            Change change = new Change(action: ChangeAction.DELETE, resourceRecordSet: resourceRecordSet)
+            changeResourceRecordSet(userContext, hostedZoneId, change, comment)
+        }, Link.to(EntityType.hostedZone, hostedZoneId)) as ChangeInfo
+    }
+
+    ChangeInfo changeResourceRecordSet(UserContext userContext, String hostedZoneId, Change change, String comment) {
+        ChangeBatch changeBatch = new ChangeBatch(comment: comment, changes: [change])
+        def request = new ChangeResourceRecordSetsRequest(hostedZoneId: hostedZoneId, changeBatch: changeBatch)
+        String action = GrailsNameUtils.getNaturalName(change.action.toLowerCase())
+        String msg = "${action} Resource Record ${change.resourceRecordSet.name}"
+        taskService.runTask(userContext, msg, {
+            awsClient.changeResourceRecordSets(request).changeInfo
+        }, Link.to(EntityType.hostedZone, hostedZoneId)) as ChangeInfo
+    }
+
 }

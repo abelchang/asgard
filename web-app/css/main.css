@@ -229,6 +229,9 @@ th.desc a                   { background-image: url(../images/skin/sorted_desc.g
 .list .lbPolicies ul        { padding-left: 0; list-style-type: none;  }
 .list .lbPolicies li        { padding-left: 10px; text-indent: -10px;  } /* Hanging indent */
 .list .activities td.details          { max-width: 300px;                        }
+.list .resourceRecordSetName          { max-width: 260px; word-wrap: break-word; white-space: normal; }
+.list .resourceRecords                { max-width: 300px; word-wrap: break-word; white-space: normal; }
+.list .resourceRecordSetId            { max-width: 120px; word-wrap: break-word; white-space: normal; }
 .list .fastProperties .var            { max-width:  60px; word-wrap: break-word; white-space: normal; }
 .list .fastProperties .propKey        { max-width: 400px; word-wrap: break-word; }
 .list .fastProperties .propValue      { max-width: 200px; word-wrap: break-word; }

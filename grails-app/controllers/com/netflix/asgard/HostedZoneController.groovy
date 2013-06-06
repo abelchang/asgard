@@ -15,7 +15,10 @@
  */
 package com.netflix.asgard
 
+import com.amazonaws.services.route53.model.AliasTarget
+import com.amazonaws.services.route53.model.ChangeInfo
 import com.amazonaws.services.route53.model.HostedZone
+import com.amazonaws.services.route53.model.ResourceRecord
 import com.amazonaws.services.route53.model.ResourceRecordSet
 import grails.converters.JSON
 import grails.converters.XML
@@ -58,5 +61,39 @@ class HostedZoneController {
             xml { new XML(result).render(response) }
             json { new JSON(result).render(response) }
         }
+    }
+
+    def prepareCreateResourceRecordSet() {
+
+    }
+
+    def createResourceRecordSet() {
+        UserContext userContext = UserContext.of(request)
+        String hostedZoneId = params.hostedZoneId
+        String resourceRecordSetName = params.resourceRecordSetName
+        List<String> resourceRecordValues = Requests.ensureList(params.resourceRecords)
+        List<ResourceRecord> resourceRecords = resourceRecordValues.collect { new ResourceRecord(it)}
+        Long ttl = params.ttl as Long
+        String region = params.resourceRecordRegion
+        String type = params.type
+        Long weight = params.weight as Long
+        String comment = params.resourceRecordSetComment
+        String setIdentifier = params.setIdentifier
+        String aliasTargetElbDnsName = params.aliasTargetElbDnsName
+        AliasTarget aliasTarget = aliasTargetElbDnsName ? new AliasTarget(hostedZoneId, aliasTargetElbDnsName) : null
+
+        ResourceRecordSet recordSet = new ResourceRecordSet(
+                name: resourceRecordSetName,
+                type: type,
+                setIdentifier: setIdentifier,
+                weight: weight,
+                region: region,
+                tTL: ttl,
+                resourceRecords: resourceRecords,
+                aliasTarget: aliasTarget
+        )
+        ChangeInfo changeInfo = awsRoute53Service.createResourceRecordSet(userContext, hostedZoneId, recordSet, comment)
+        flash.message = "DNS change submitted: ${changeInfo}"
+        redirect(action: 'show', id: hostedZoneId)
     }
 }

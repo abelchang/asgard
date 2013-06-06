@@ -19,7 +19,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta name="layout" content="main"/>
-  <title>${hostedZone.id} Hosted Zone</title>
+  <title>${hostedZone.name} Hosted Zone</title>
 </head>
 <body>
   <div class="body">
@@ -57,6 +57,8 @@
           <td class="value">
             <g:if test="${resourceRecordSets}">
               <div class="list">
+                <div class="buttons">
+                </div>
                 <table class="sortable subitems">
                   <thead>
                   <tr>
@@ -71,8 +73,8 @@
                   </thead>
                     <g:each var="resourceRecordSet" in="${resourceRecordSets}" status="i">
                       <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
-                        <td>${resourceRecordSet.name}</td>
-                        <td>
+                        <td class="resourceRecordSetName">${resourceRecordSet.name}</td>
+                        <td class="resourceRecords">
                           <ul class="links">
                             <g:each var="resourceRecord" in="${resourceRecordSet.resourceRecords}">
                               <li>${resourceRecord.value}</li>
@@ -82,7 +84,7 @@
                         <td>${resourceRecordSet.TTL}</td>
                         <td>${resourceRecordSet.region}</td>
                         <td>${resourceRecordSet.aliasTarget}</td>
-                        <td>${resourceRecordSet.setIdentifier}</td>
+                        <td class="resourceRecordSetId">${resourceRecordSet.setIdentifier}</td>
                         <td>${resourceRecordSet.weight}</td>
                       </tr>
                     </g:each>
