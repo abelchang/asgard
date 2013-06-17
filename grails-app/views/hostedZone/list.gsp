@@ -30,13 +30,13 @@
   <g:form method="post">
     <div class="list">
       <div class="buttons">
+        <g:link class="create" action="create">Create New Hosted Zone</g:link>
       </div>
       <table class="sortable">
         <thead>
         <tr>
           <th>Hosted Zone ID</th>
           <th>Name</th>
-          <th>Caller Reference</th>
           <th>Resource Record<br/>Set Count</th>
           <th>Comment</th>
         </tr>
@@ -46,7 +46,6 @@
           <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
             <td><g:linkObject type="hostedZone" name="${hostedZone.id}"/></td>
             <td>${hostedZone.name}</td>
-            <td>${hostedZone.callerReference}</td>
             <td>${hostedZone.resourceRecordSetCount}</td>
             <td>${hostedZone.config.comment}</td>
           </tr>

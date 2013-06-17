@@ -71,6 +71,8 @@ input, select, textarea, button div { background-color: #FCFCFC; border: 1px sol
 input.number                     { width: 36px;  }
 .numbers input.string[type=text] { width: auto;  }
 .fastPropertyValue               { width: 500px; }
+.longInput input[type=text]      { width: 500px; }
+.longInput textarea              { width: 500px; }
 .bigValue                        { max-width: 500px; word-wrap: break-word; }
 
 .inlineInputs input             { margin-right: 10px; }

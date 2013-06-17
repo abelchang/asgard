@@ -21,8 +21,11 @@ import com.amazonaws.services.route53.model.ChangeAction
 import com.amazonaws.services.route53.model.ChangeBatch
 import com.amazonaws.services.route53.model.ChangeInfo
 import com.amazonaws.services.route53.model.ChangeResourceRecordSetsRequest
+import com.amazonaws.services.route53.model.CreateHostedZoneRequest
+import com.amazonaws.services.route53.model.DeleteHostedZoneRequest
 import com.amazonaws.services.route53.model.GetHostedZoneRequest
 import com.amazonaws.services.route53.model.HostedZone
+import com.amazonaws.services.route53.model.HostedZoneConfig
 import com.amazonaws.services.route53.model.ListHostedZonesRequest
 import com.amazonaws.services.route53.model.ListHostedZonesResult
 import com.amazonaws.services.route53.model.ListResourceRecordSetsRequest
@@ -60,7 +63,7 @@ class AwsRoute53Service implements CacheInitializer, InitializingBean {
         caches.allHostedZones.list().sort { it.name }
     }
 
-    HostedZone getHostedZone(String idOrName) {
+    HostedZone getHostedZone(UserContext userContext, String idOrName) {
         // Hosted zone names always contain dots, and hosted zone IDs never contain dots.
         // Users may request "test.company.net" for a hosted zone with name "test.company.net."
         String id = idOrName.contains('.') ? (zoneByName(idOrName) ?: zoneByName("${idOrName}."))?.id : idOrName
@@ -76,6 +79,38 @@ class AwsRoute53Service implements CacheInitializer, InitializingBean {
     private HostedZone zoneByName(String name) {
         caches.allHostedZones.list().find { it.name == name }
     }
+
+
+
+
+
+
+
+
+    HostedZone createHostedZone(UserContext userContext, String name, String comment) {
+        println comment
+        println name
+        HostedZone hostedZone = taskService.runTask(userContext, "Create Hosted Zone '${name}'", { task ->
+            CreateHostedZoneRequest request = new CreateHostedZoneRequest(name, UUID.randomUUID().toString())
+            if (comment) {
+                request.hostedZoneConfig = new HostedZoneConfig(comment: comment)
+            }
+            awsClient.createHostedZone(request).hostedZone
+        }, Link.to(EntityType.hostedZone, name)) as HostedZone
+        getHostedZone(userContext, hostedZone.id)
+    }
+
+
+    ChangeInfo deleteHostedZone(UserContext userContext, String hostedZoneId) {
+        ChangeInfo changeInfo = taskService.runTask(userContext, "Delete Hosted Zone ${hostedZoneId}", { task ->
+            DeleteHostedZoneRequest request = new DeleteHostedZoneRequest(hostedZoneId)
+            awsClient.deleteHostedZone(request).changeInfo
+        }, Link.to(EntityType.hostedZone, hostedZoneId)) as ChangeInfo
+        caches.allHostedZones.remove(hostedZoneId)
+        changeInfo
+    }
+
+
 
     List<HostedZone> retrieveHostedZones() {
         AwsResultsRetriever retriever = new AwsResultsRetriever<HostedZone, ListHostedZonesRequest, ListHostedZonesResult>() {

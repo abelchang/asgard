@@ -116,7 +116,7 @@
        <g:link class="loadBalancers" controller="loadBalancer" action="list">ELB</g:link>
        <ul>
          <li class="menuButton"><g:link class="loadBalancers" controller="loadBalancer" action="list">Elastic Load Balancers</g:link></li>
-         <li class="menuButton"><g:link class="hostedZones" controller="hostedZone" action="list">Hosted Zones</g:link></li>
+         <li class="menuButton"><g:link class="hostedZones" controller="hostedZone" action="list">Route53 Hosted Zones</g:link></li>
        </ul>
      </li>
      <li class="menuButton">

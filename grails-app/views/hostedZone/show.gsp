@@ -28,6 +28,10 @@
       <div class="message">${flash.message}</div>
     </g:if>
     <div class="buttons">
+      <g:form>
+        <input type="hidden" name="id" value="${hostedZone.id}"/>
+        <g:buttonSubmit class="delete" action="delete" value="Delete Hosted Zone" data-warning="${deletionWarning}"/>
+      </g:form>
     </div>
     <div>
       <table>
@@ -58,10 +62,12 @@
             <g:if test="${resourceRecordSets}">
               <div class="list">
                 <div class="buttons">
+                  <g:link class="create" action="prepareResourceRecordSet" id="${hostedZone.id}">Create New Resource Record Set</g:link>
                 </div>
                 <table class="sortable subitems">
                   <thead>
                   <tr>
+                    <th>Type</th>
                     <th>Name</th>
                     <th>Resource Records</th>
                     <th>TTL</th>
@@ -73,6 +79,7 @@
                   </thead>
                     <g:each var="resourceRecordSet" in="${resourceRecordSets}" status="i">
                       <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
+                        <td>${resourceRecordSet.type}</td>
                         <td class="resourceRecordSetName">${resourceRecordSet.name}</td>
                         <td class="resourceRecords">
                           <ul class="links">
