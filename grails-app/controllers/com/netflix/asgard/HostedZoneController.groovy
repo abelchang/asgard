@@ -137,9 +137,9 @@ class HostedZoneController {
             ResourceRecordSet recordSet = new ResourceRecordSet(
                     name: cmd.resourceRecordSetName,
                     type: cmd.type,
-                    setIdentifier: cmd.setIdentifier,
+                    setIdentifier: cmd.setIdentifier ?: null,
                     weight: params.weight ? params.weight as Long : null,
-                    region: cmd.resourceRecordSetRegion,
+                    region: cmd.resourceRecordSetRegion ?: null,
                     tTL: params.ttl ? params.ttl as Long : null,
                     resourceRecords: resourceRecords,
                     aliasTarget: aliasTargetElbDnsName ? new AliasTarget(id, aliasTargetElbDnsName) : null
