@@ -18,6 +18,8 @@ class UrlMappings {
 
         "/externalImage/$name**"(controller: 'externalImage')
 
+        "/externalFile/$path**"(controller: 'externalFile')
+
         "/$controller/$action?/$id?" {
             constraints {
                 // apply constraints here

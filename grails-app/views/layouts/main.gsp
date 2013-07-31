@@ -27,6 +27,7 @@
   <!--[if IE]>
     <link rel="stylesheet" href="${resource(dir: 'css', file: 'ie.css')}?v=${build}"/>
   <![endif]-->
+  <g:insertHead version="${build}"/>
   <link rel="shortcut icon" href="${resource(dir: '/', file: 'favicon.ico')}" type="image/x-icon"/>
   <g:layoutHead/>
 </head>
@@ -39,6 +40,7 @@
   </div>
 <![endif]-->
 </g:if>
+  <g:insertHeader region="${region}"/>
   <div id="spinner" class="spinner" style="display:none;">
     <img src="${resource(dir: 'images', file: 'spinner.gif')}" alt="Spinner"/>
   </div>
@@ -155,5 +157,6 @@
   <script defer type="text/javascript" src="${resource(dir: 'js/select2-3.2', file: 'select2.min.js')}?v=${build}"></script>
   <script defer type="text/javascript" src="${resource(dir: 'js', file: 'custom.js')}?v=${build}"></script>
   <g:render template="/layouts/occasion"/>
+  <g:insertFooter version="${build}"/>
 </body>
 </html>

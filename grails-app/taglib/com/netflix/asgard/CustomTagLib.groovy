@@ -20,6 +20,7 @@ import org.codehaus.groovy.runtime.StackTraceUtils
 
 class CustomTagLib {
 
+    def configService
     def emailerService
     def jokeService
 

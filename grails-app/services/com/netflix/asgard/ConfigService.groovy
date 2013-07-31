@@ -162,6 +162,27 @@ class ConfigService {
     }
 
     /**
+     * @return optional custom HTML code to load in the head of each page
+     */
+    String getInsertHead() {
+        grailsApplication.config.insert?.head ?: null
+    }
+
+    /**
+     * @return optional custom HTML content to load at the top of each page
+     */
+    String getInsertHeader() {
+        grailsApplication.config.insert?.header ?: null
+    }
+
+    /**
+     * @return optional custom HTML content to load at the bottom of each page
+     */
+    String getInsertFooter() {
+        grailsApplication.config.insert?.footer ?: null
+    }
+
+    /**
      * @return URL to link to so users can configure alerting for their applications, with a default of null
      */
     String getAlertingServiceConfigUrl() {
