@@ -25,7 +25,6 @@ import com.amazonaws.services.simpleworkflow.model.WorkflowExecution
 import com.google.common.collect.Sets
 import com.netflix.asgard.model.AutoScalingGroupBeanOptions
 import com.netflix.asgard.deployment.DeploymentWorkflowOptions
-import com.netflix.asgard.deployment.DeploymentWorkflow
 import com.netflix.asgard.model.LaunchConfigurationBeanOptions
 import com.netflix.asgard.deployment.ProceedPreference
 import com.netflix.asgard.model.AutoScalingGroupData
@@ -344,10 +343,8 @@ ${lastGroup.loadBalancerNames}"""
                 ebsOptimized: params.ebsOptimized?.toBoolean()
         )
 
-        def client = flowService.getNewWorkflowClient(userContext, DeploymentWorkflow,
-                new Link(EntityType.cluster, cmd.clusterName))
-        client.asWorkflow().deploy(userContext, deploymentOptions, lcOverrides, asgOverrides)
-        WorkflowExecution workflowExecution = client.workflowExecution
+        WorkflowExecution workflowExecution = pushService.startDeployment(userContext, cmd.clusterName,
+                deploymentOptions, lcOverrides, asgOverrides)
         redirect(controller: 'task', action: 'show', params: [runId: workflowExecution.runId,
                 workflowId: workflowExecution.workflowId])
     }

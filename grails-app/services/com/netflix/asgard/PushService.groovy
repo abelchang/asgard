@@ -19,6 +19,12 @@ import com.amazonaws.services.autoscaling.model.AutoScalingGroup
 import com.amazonaws.services.autoscaling.model.LaunchConfiguration
 import com.amazonaws.services.ec2.model.Image
 import com.amazonaws.services.ec2.model.SecurityGroup
+import com.amazonaws.services.simpleworkflow.model.WorkflowExecution
+import com.netflix.asgard.deployment.AutoScalingGroupOptions
+import com.netflix.asgard.deployment.DeploymentWorkflow
+import com.netflix.asgard.deployment.DeploymentWorkflowOptions
+import com.netflix.asgard.deployment.LaunchConfigurationOptions
+import com.netflix.asgard.flow.InterfaceBasedWorkflowClient
 import com.netflix.asgard.model.InstancePriceType
 import com.netflix.asgard.model.Subnets
 import com.netflix.asgard.model.ZoneAvailability
@@ -40,7 +46,9 @@ class PushService {
 
     def awsAutoScalingService
     def awsEc2Service
+    def awsSimpleWorkflowService
     def configService
+    def flowService
     def imageService
     def instanceTypeService
     def restClientService
@@ -184,5 +192,26 @@ class PushService {
                 spotUrl: configService.spotUrl
         ]
         result
+    }
+
+    /**
+     * Starts the deployment of a new Auto Scaling Group in an existing cluster.
+     *
+     * @param userContext who, where, why
+     * @param clusterName the name of the cluster where the next ASG should be created
+     * @param deploymentOptions dictate what the deployment will do
+     * @param lcOverrides specify changes to the template launch configuration
+     * @param asgOverrides specify changes to the template auto scaling group
+     * @return the workflow execution that has started
+     */
+    public WorkflowExecution startDeployment(UserContext userContext, String clusterName,
+            DeploymentWorkflowOptions deploymentOptions, LaunchConfigurationOptions lcOverrides,
+            AutoScalingGroupOptions asgOverrides) {
+
+        InterfaceBasedWorkflowClient<DeploymentWorkflow> client = flowService.getNewWorkflowClient(userContext,
+                DeploymentWorkflow, new Link(EntityType.cluster, clusterName))
+        client.asWorkflow().deploy(userContext, deploymentOptions, lcOverrides, asgOverrides)
+        WorkflowExecution workflowExecution = client.workflowExecution
+        workflowExecution
     }
 }
