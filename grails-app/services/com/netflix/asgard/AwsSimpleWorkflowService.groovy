@@ -412,15 +412,24 @@ class AwsSimpleWorkflowService implements CacheInitializer, InitializingBean {
     }
 
     /**
-     * Gets details about a workflow execution from AWS.
+     * Gets details about a workflow execution from AWS, and modifies local list caches appropriately.
      *
      * @param execution workflow execution reference
      * @return workflow execution details
      */
     WorkflowExecutionDetail getWorkflowExecutionDetail(WorkflowExecution execution) {
         String domain = configService.simpleWorkflowDomain
-        simpleWorkflowClient.describeWorkflowExecution(new DescribeWorkflowExecutionRequest(domain: domain,
-                execution: execution))
+        def request = new DescribeWorkflowExecutionRequest(domain: domain, execution: execution)
+        WorkflowExecutionDetail executionDetail = simpleWorkflowClient.describeWorkflowExecution(request)
+        WorkflowExecutionInfo workflowExecutionInfo = executionDetail.executionInfo
+        String key = EntityType.workflowExecution.keyer(workflowExecutionInfo)
+        CachedMap<WorkflowExecutionInfo> cacheToPutItemInto = caches.allOpenWorkflowExecutions
+        if (workflowExecutionInfo.closeTimestamp) {
+            caches.allOpenWorkflowExecutions.remove(key)
+            cacheToPutItemInto = caches.allClosedWorkflowExecutions
+        }
+        cacheToPutItemInto.put(key, workflowExecutionInfo)
+        executionDetail
     }
 
 }

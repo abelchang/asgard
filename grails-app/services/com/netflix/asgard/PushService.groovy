@@ -25,6 +25,7 @@ import com.netflix.asgard.deployment.DeploymentWorkflow
 import com.netflix.asgard.deployment.DeploymentWorkflowOptions
 import com.netflix.asgard.deployment.LaunchConfigurationOptions
 import com.netflix.asgard.flow.InterfaceBasedWorkflowClient
+import com.netflix.asgard.flow.WorkflowExecutionCreationCallback
 import com.netflix.asgard.model.InstancePriceType
 import com.netflix.asgard.model.Subnets
 import com.netflix.asgard.model.ZoneAvailability
@@ -194,6 +195,13 @@ class PushService {
         result
     }
 
+    private WorkflowExecutionCreationCallback updateCaches = new WorkflowExecutionCreationCallback() {
+        @Override
+        void call(WorkflowExecution workflowExecution) {
+            awsSimpleWorkflowService.getWorkflowExecutionDetail(workflowExecution) // Update caches
+        }
+    }
+
     /**
      * Starts the deployment of a new Auto Scaling Group in an existing cluster.
      *
@@ -210,7 +218,7 @@ class PushService {
 
         InterfaceBasedWorkflowClient<DeploymentWorkflow> client = flowService.getNewWorkflowClient(userContext,
                 DeploymentWorkflow, new Link(EntityType.cluster, clusterName))
-        client.asWorkflow().deploy(userContext, deploymentOptions, lcOverrides, asgOverrides)
+        client.asWorkflow(updateCaches).deploy(userContext, deploymentOptions, lcOverrides, asgOverrides)
         WorkflowExecution workflowExecution = client.workflowExecution
         workflowExecution
     }
