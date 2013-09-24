@@ -1047,6 +1047,14 @@ class AwsAutoScalingService implements CacheInitializer, InitializingBean {
         null
     }
 
+    boolean isAutoScalingGroupInLockedCluster(String autoScalingGroupName) {
+
+    }
+
+    boolean isClusterAutoDeployInProgress(String clusterName) {
+
+    }
+
     // public TerminateInstanceInAutoScalingGroupResponse terminateInstanceInAutoScalingGroup(TerminateInstanceInAutoScalingGroupRequest request) throws AmazonAutoScalingException;
 
     // Launch Configurations

@@ -20,6 +20,7 @@ import com.amazonaws.services.simpleworkflow.model.DomainInfo
 import com.netflix.asgard.retriever.AwsResultsRetriever
 import spock.lang.Specification
 
+@SuppressWarnings(["GroovyAssignabilityCheck", "GroovyAccessibility"])
 class AwsSimpleWorkflowServiceUnitSpec extends Specification {
 
     AwsSimpleWorkflowService awsSimpleWorkflowService = Spy(AwsSimpleWorkflowService)
@@ -55,5 +56,13 @@ class AwsSimpleWorkflowServiceUnitSpec extends Specification {
 
         then:
         1 * awsSimpleWorkflowService.simpleWorkflowClient.registerDomain(_)
+    }
+
+    def 'getting a closed workflow execution updates the cache of closed executions and removes from open ones'() {
+
+    }
+
+    def 'getting an open workflow execution updates the cache of open executions'() {
+
     }
 }

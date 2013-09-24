@@ -67,4 +67,7 @@ class PushServiceUnitSpec extends Specification {
         pushService.startDeployment(userContext, 'hello', deployOpts, lcOpts, asgOpts) instanceof WorkflowExecution
     }
 
+    def 'starting a deployment should update cache of open workflow executions'() {
+
+    }
 }

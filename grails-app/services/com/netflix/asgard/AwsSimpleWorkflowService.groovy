@@ -46,6 +46,7 @@ import com.amazonaws.services.simpleworkflow.model.WorkflowTypeDetail
 import com.amazonaws.services.simpleworkflow.model.WorkflowTypeInfo
 import com.amazonaws.services.simpleworkflow.model.WorkflowTypeInfos
 import com.netflix.asgard.cache.CacheInitializer
+import com.netflix.asgard.model.SwfWorkflowTags
 import com.netflix.asgard.retriever.AwsResultsRetriever
 import org.joda.time.DateTime
 import org.springframework.beans.factory.InitializingBean
@@ -235,6 +236,22 @@ class AwsSimpleWorkflowService implements CacheInitializer, InitializingBean {
         caches.allOpenWorkflowExecutions.list().findAll { it.tagList }
     }
 
+    WorkflowExecutionInfo findFirstOpenWorkflowExecutionForObject(Link link) {
+        openWorkflowExecutions.find {
+
+            WorkflowType type = it.workflowType
+            type.name
+
+
+            SwfWorkflowTags workflowTags = new SwfWorkflowTags().withTags(it.tagList) as SwfWorkflowTags
+            link == workflowTags.link
+        }
+
+
+
+
+    }
+
     // Closed workflow executions
 
     private List<WorkflowExecutionInfo> retrieveClosedWorkflowExecutions() {
@@ -365,22 +382,6 @@ class AwsSimpleWorkflowService implements CacheInitializer, InitializingBean {
             caches.allWorkflowDomains.put(name, domain)
         }
         domain
-    }
-
-    private AwsResultsRetriever executionHistoryRetriever = new AwsResultsRetriever<HistoryEvent,
-            GetWorkflowExecutionHistoryRequest, History>() {
-        protected History makeRequest(Region region, GetWorkflowExecutionHistoryRequest request) {
-            simpleWorkflowClient.getWorkflowExecutionHistory(request)
-        }
-        protected List<HistoryEvent> accessResult(History result) {
-            result.events
-        }
-        protected void setNextToken(GetWorkflowExecutionHistoryRequest request, String nextToken) {
-            request.withNextPageToken(nextToken)
-        }
-        protected String getNextToken(History result) {
-            result.nextPageToken
-        }
     }
 
     /**
