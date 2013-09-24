@@ -28,6 +28,8 @@ import com.netflix.asgard.deployment.LaunchConfigurationOptions
 import com.netflix.asgard.flow.InterfaceBasedWorkflowClient
 import com.netflix.asgard.flow.WorkflowDescriptionTemplate
 import com.netflix.asgard.flow.WorkflowTags
+import com.netflix.asgard.model.AutoScalingGroupBeanOptions
+import com.netflix.asgard.model.LaunchConfigurationBeanOptions
 import spock.lang.Specification
 
 @SuppressWarnings("GroovyAssignabilityCheck")
@@ -58,8 +60,8 @@ class PushServiceUnitSpec extends Specification {
 
         UserContext userContext = UserContext.auto(Region.US_EAST_1)
         DeploymentWorkflowOptions deployOpts = new DeploymentWorkflowOptions()
-        LaunchConfigurationOptions lcOpts = new LaunchConfigurationOptions()
-        AutoScalingGroupOptions asgOpts = new AutoScalingGroupOptions()
+        LaunchConfigurationBeanOptions lcOpts = new LaunchConfigurationBeanOptions()
+        AutoScalingGroupBeanOptions asgOpts = new AutoScalingGroupBeanOptions()
 
         expect:
         pushService.startDeployment(userContext, 'hello', deployOpts, lcOpts, asgOpts) instanceof WorkflowExecution

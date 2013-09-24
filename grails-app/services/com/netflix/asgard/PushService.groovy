@@ -26,7 +26,9 @@ import com.netflix.asgard.deployment.DeploymentWorkflowOptions
 import com.netflix.asgard.deployment.LaunchConfigurationOptions
 import com.netflix.asgard.flow.InterfaceBasedWorkflowClient
 import com.netflix.asgard.flow.WorkflowExecutionCreationCallback
+import com.netflix.asgard.model.AutoScalingGroupBeanOptions
 import com.netflix.asgard.model.InstancePriceType
+import com.netflix.asgard.model.LaunchConfigurationBeanOptions
 import com.netflix.asgard.model.Subnets
 import com.netflix.asgard.model.ZoneAvailability
 import com.netflix.asgard.push.GroupActivateOperation
@@ -213,8 +215,8 @@ class PushService {
      * @return the workflow execution that has started
      */
     public WorkflowExecution startDeployment(UserContext userContext, String clusterName,
-            DeploymentWorkflowOptions deploymentOptions, LaunchConfigurationOptions lcOverrides,
-            AutoScalingGroupOptions asgOverrides) {
+            DeploymentWorkflowOptions deploymentOptions, LaunchConfigurationBeanOptions lcOverrides,
+            AutoScalingGroupBeanOptions asgOverrides) {
 
         InterfaceBasedWorkflowClient<DeploymentWorkflow> client = flowService.getNewWorkflowClient(userContext,
                 DeploymentWorkflow, new Link(EntityType.cluster, clusterName))
